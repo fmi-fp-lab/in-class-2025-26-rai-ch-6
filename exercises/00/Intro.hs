@@ -47,6 +47,35 @@ module Intro where
 -- expressive static types
 -- no null everywhere!
 -- sum types
+
+-- x :: Integer
+-- x = 5
+
+data Banica = SysSirene Integer Banica | SPatlajan
+data List = PrazenList String | ListSPoneEdinElement Integer List
+
+data Colour = Green | Blue | Red
+
+-- [](int x) -> int { return x + 2; }
+
+func :: Integer -> Integer
+-- func = \y -> y
+func y = y + 1
+
+-- >>> func 1
+-- 2
+
+-- data Bool = True | False
+
+daliEPet :: Integer -> Bool
+-- daliEPet x = if x == 5 then True else False
+daliEPet 5 = True
+daliEPet _ = False
+
+kolkoShtePieSprqmoTvaDaliEPetyk :: Bool -> Int
+kolkoShtePieSprqmoTvaDaliEPetyk True = 10
+kolkoShtePieSprqmoTvaDaliEPetyk False = 6
+
 -- pattern matching!
 -- higher-order functions!
 -- lazy - a boon and a curse
@@ -101,24 +130,25 @@ module Intro where
 
 -- show HLS features:
 
--- -- warnings
--- fun1 :: Int -> Int
--- fun1 x = 10 + 3
---
--- -- hint
--- fun2 :: Int -> Int
--- fun2 x = succ x
---
--- -- type inference and hover
--- fun3 :: Bool -> Char -> Char
--- fun3 b c =
---   if b
---     then c
---     else 'a'
---
--- -- add type signature
--- fun4 x c y =
---   fun3 (fun2 (fun1 x) == y) c
+-- warnings
+fun1 :: Int -> Int
+fun1 _x = 10 + 3
+
+-- hint
+fun2 :: Int -> Int
+fun2 x = succ x
+
+-- type inference and hover
+fun3 :: Bool -> Char -> Char
+fun3 b c =
+  if b
+    then c
+    else 'a'
+
+-- add type signature
+fun4 :: Int -> Char -> Int -> Char
+fun4 x c y =
+  fun3 (fun2 (fun1 x) == y) c
 
 -- evaluate code in >>>
 
