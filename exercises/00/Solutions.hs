@@ -2,8 +2,7 @@
 
 -- NOTE: read up more here - https://wiki.haskell.org/Language_Pragmas
 
--- cover all cases!
-{-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
+-- cover all cases! # OPTIONS_GHC -fwarn-incomplete-patterns #-}
 -- warn about incomplete patterns v2
 {-# OPTIONS_GHC -fwarn-incomplete-uni-patterns #-}
 -- write all your toplevel signatures!
@@ -23,159 +22,16 @@ module Intro where
 
 ---------------------------------
 
--- NOTE: me
--- Pavel Atanasov, contact info in README
--- (бивш) СИ, не млъква
-
--- WARN: administrivia
--- ask about git knowledge
---   - collect GitHub usernames
---   - https://classroom.github.com/a/7tXqCf8D
--- ask about uni programs
--- github repo - https://github.com/fmi-fp-lab/fp-lab-2025-26
-
--- TODO: exposition
---
--- throw away most of the terminology you know from other languages
---
---   (Typed) Functional Programming is
---     - Defining Datatypes To Represent Problems
---     - Defining Functions To Create New Data From Old
-
---
--- garbage collection
--- expressive static types
--- no null everywhere!
--- sum types
-
--- x :: Integer
--- x = 5
-
-data Banica = SysSirene Integer Banica | SPatlajan
-data List = PrazenList String | ListSPoneEdinElement Integer List
-
-data Colour = Green | Blue | Red
-
--- [](int x) -> int { return x + 2; }
-
-func :: Integer -> Integer
--- func = \y -> y
-func y = y + 1
-
--- >>> func 1
--- 2
-
--- data Bool = True | False
-
-daliEPet :: Integer -> Bool
--- daliEPet x = if x == 5 then True else False
-daliEPet 5 = True
-daliEPet _ = False
-
-kolkoShtePieSprqmoTvaDaliEPetyk :: Bool -> Int
-kolkoShtePieSprqmoTvaDaliEPetyk True = 10
-kolkoShtePieSprqmoTvaDaliEPetyk False = 6
-
--- pattern matching!
--- higher-order functions!
--- lazy - a boon and a curse
--- no arbitrary IO
--- no mutations
--- value/"pipeline" oriented
--- concise, very modular
-
--- all in all -
--- the language allows you to
-
--- * make it harder for yourself to write garbage
-
---   * very enjoyable to work with - I'm dumb and so I let my compiler do most of my work for me
---   * used for things that **really** shouldn't break :) - e.g. banks, military
-
--- * be free in what level of abstraction you want to work on
-
---   * you can write rather low level C-like code
---   * but you can also almost directly express some mathematical concepts in it
---   * you can save yourself *a lot* of boilerplate
---
-
--- disadvantages
--- not ultra popular:
-
--- * harder to get a job
-
--- * some libraries might be outdated/not extremely optimised
-
--- * there aren't obvious "best ways" to do things sometimes
-
--- learning curve is very steep at the beginning - especially when you are coming from an "imperative" and/or untyped background
--- used a lot for things of questionable morality (finance, blockchain, etc)
-
--- myths
--- not a silver bullet
--- it's still a tool, and tools require proper usage (https://pbs.twimg.com/media/E7Kc0OhVUAAV0xz?format=jpg&name=small)
--- monads aren't hard (in haskell), they're only scary sounding
-
--- TODO:
--- comments
--- syntax and values
--- ghci - interactive development
--- calling functions
--- function definition
--- type declarations
--- base types
--- if
--- operators
--- holes
-
--- show HLS features:
-
--- warnings
-fun1 :: Int -> Int
-fun1 _x = 10 + 3
-
--- hint
-fun2 :: Int -> Int
-fun2 x = succ x
-
--- type inference and hover
-fun3 :: Bool -> Char -> Char
-fun3 b c =
-  if b
-    then c
-    else 'a'
-
--- add type signature
-fun4 :: Int -> Char -> Int -> Char
-fun4 x c y =
-  fun3 (fun2 (fun1 x) == y) c
-
--- evaluate code in >>>
-
--- >>> 5 + 15 + 100
--- 120
-
--- TODO: show
--- if-then-else (is an expression)
--- numeric operations
--- function application
-
--- Explain undefined vs _
--- Explain "taking arguments" (via c style sigs?)
 -- >>> fact 5
 -- 120
 -- >>> fact 7
 -- 5040
 
-fact :: Int -> Int
+fact :: Integer -> Integer
 fact n =
   if n == 0
     then 1
     else n * fact (n - 1)
-
--- 3 + 4 * 7
-
--- isBiggerThan add42 3 5
 
 -- EXAMPLES
 -- >>> fib 0
@@ -186,7 +42,9 @@ fact n =
 -- 34
 
 fib :: Integer -> Integer
-fib = undefined
+fib 0 = 1
+fib 1 = 1
+fib n = fib (n - 1) + fib (n - 2)
 
 -- use the following "mathematical definition" to implement addition on natural numbers:
 -- myPlus x y = { y                        | x == 0    }
@@ -203,7 +61,10 @@ fib = undefined
 -- 42
 
 myPlus :: Integer -> Integer -> Integer
-myPlus n m = undefined
+myPlus x y =
+  if x == 0
+    then y
+    else succ (myPlus (pred x) y)
 
 -- same as above, implement multiplication on natural numbers recursively, using addition instead of succ
 -- EXAMPLES
@@ -216,7 +77,10 @@ myPlus n m = undefined
 -- >>> myMult 1 42
 -- 42
 myMult :: Integer -> Integer -> Integer
-myMult n m = undefined
+myMult n m =
+  if n == 0
+    then 0
+    else myPlus m (myMult (n - 1) m)
 
 -- Implement "fast exponentiation".
 -- This uses the following property:
@@ -232,7 +96,13 @@ myMult n m = undefined
 -- >>> fastPow 2 6
 -- 64
 fastPow :: Integer -> Integer -> Integer
-fastPow = undefined
+fastPow x n =
+  if n == 0
+    then 1
+    else
+      if even n
+        then fastPow (x * x) (n `div` 2)
+        else x * fastPow x (n - 1)
 
 -- Define two mutually recursive functions which check whether a number is even or odd.
 -- Assume that the input is non-negative.
@@ -251,10 +121,30 @@ fastPow = undefined
 -- True
 
 isEven :: Integer -> Bool
-isEven x = undefined
+isEven n =
+  (n == 0) || ((n /= 1) && isOdd (n - 1))
+
+-- or the easier to understand
+-- isEven n =
+--   if n == 0
+--     then True
+--     else
+--       if n == 1
+--         then False
+--         else isOdd (n - 1)
 
 isOdd :: Integer -> Bool
-isOdd x = undefined
+isOdd n =
+  (n == 1) || ((n /= 0) && isEven (n - 1))
+
+-- or the easier to understand
+-- isOdd n =
+--   if n == 0
+--     then False
+--     else
+--       if n == 1
+--         then True
+--         else isEven (n - 1)
 
 -- Define a function to check whether a given Integer is a prime number.
 -- Assume that the input is non-negative.
@@ -304,6 +194,19 @@ isOdd x = undefined
 -- True
 
 isPrime :: Integer -> Bool
-isPrime n = undefined
+isPrime n = not (anyDividesInRange 2 (n - 1))
+  where
+    divides x y = y `rem` x == 0
+    anyDividesInRange a b =
+      (a <= b) && ((a `divides` n) || anyDividesInRange (succ a) b)
+
+-- or the easier to understand
+-- anyDividesInRange a b =
+--   if a > b
+--   then False
+--   else
+--    if a `divides` n
+--    then True
+--    else anyDividesInRange (succ a) b
 
 -- vim: foldmethod=marker:
